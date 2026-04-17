@@ -1,0 +1,63 @@
+name: ios-ipa-build-react-native
+
+on:
+  workflow_dispatch:
+
+env:
+  APP_VERSION: 1.0.0
+  APP_SCHEME: YourApp
+  APP_WORKSPACE: ios/YourApp.xcworkspace
+  ARCHIVE_PATH: build/ios/archive/YourApp.xcarchive
+  EXPORT_DIR: build/ios/export
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Install CocoaPods
+        run: pod install
+        working-directory: ios
+
+      - name: Build archive without code signing
+        run: |
+          xcodebuild \
+            -workspace "$APP_WORKSPACE" \
+            -scheme "$APP_SCHEME" \
+            -configuration Release \
+            -archivePath "$ARCHIVE_PATH" \
+            -destination generic/platform=iOS \
+            MARKETING_VERSION="$APP_VERSION" \
+            CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
+            CODE_SIGNING_ALLOWED=NO \
+            archive
+
+      - name: Create Payload folder
+        run: mkdir -p Payload
+        working-directory: ${{ env.EXPORT_DIR }}
+
+      - name: Copy app bundle
+        run: cp -R "../../archive/YourApp.xcarchive/Products/Applications/$APP_SCHEME.app" Payload/
+        working-directory: ${{ env.EXPORT_DIR }}
+
+      - name: Package IPA
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+          Payload \
+          "${{ github.event.repository.name }}.ipa"
+        working-directory: ${{ env.EXPORT_DIR }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}-ios-ipa-build-${{ github.run_number }}
+          path: ${{ env.EXPORT_DIR }}/${{ github.event.repository.name }}.ipa
