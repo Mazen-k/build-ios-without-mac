@@ -1,12 +1,17 @@
-# flutter-ios-build-without-mac
+# ios-build-without-mac
 
-Guide for installing Flutter apps on iOS without using a Mac.
+Guide for installing **Flutter** and **React Native** apps on iOS without using a Mac.
 
 ---
 
 ## What this does
 
-This method lets you build an iOS `.ipa` file for a Flutter app using **GitHub Actions**, then install it on an iPhone from a Windows PC.
+This method lets you build an iOS `.ipa` file using **GitHub Actions**, then install it on an iPhone from a Windows PC.
+
+It can be used for:
+
+* **Flutter apps**
+* **React Native apps**
 
 No Mac required.
 
@@ -21,7 +26,7 @@ Before starting, install the following tools on your computer:
 
 You will also need:
 
-* A **Flutter project**
+* A **Flutter** or **React Native** project
 * A **GitHub account**
 * An **iPhone**
 * A **USB cable**
@@ -35,16 +40,17 @@ You will also need:
 * You must reinstall it every 7 days
 * You may need to trust the developer profile on the iPhone
 * You may need to enable Developer Mode
+* The GitHub Actions workflow is different for **Flutter** and **React Native**, so make sure you use the correct YAML file for your project
 
 ---
 
-# Step 1 — Upload Your Flutter Project to GitHub
+# Step 1 — Upload Your Project to GitHub
 
-Create a GitHub repository and upload your Flutter project.
+Create a GitHub repository and upload your Flutter or React Native project.
 
-Example:
+### Option A — Using Git / Terminal
 
-```bash id="hmn9db"
+```bash
 git init
 git add .
 git commit -m "Initial commit"
@@ -53,18 +59,35 @@ git remote add origin YOUR_REPOSITORY_URL
 git push -u origin main
 ```
 
+### Option B — Using GitHub Desktop
+
+1. Install **GitHub Desktop**
+2. Open GitHub Desktop
+3. Click **Add Existing Repository**
+4. Select your project folder
+5. Click **Publish Repository**
+6. Choose a repository name
+7. Upload it to GitHub
+
+GitHub Desktop is easier if you do not want to use terminal commands.
+
 ---
 
-# Step 2 — Add GitHub Actions Workflow
+# Step 2 — Add the GitHub Actions Workflow
 
 1. Open your GitHub repository
 2. Go to **Actions**
 3. Click **New workflow**
 4. Choose **set up a workflow yourself**
-5. Paste the provided YAML file
+5. Paste the correct YAML file
 6. Commit the file
 
-This workflow will build your Flutter iOS app and generate an `.ipa` file.
+Use:
+
+* the **Flutter workflow** for Flutter projects
+* the **React Native workflow** for React Native projects
+
+This workflow will build your iOS app and generate an `.ipa` file.
 
 ---
 
@@ -122,9 +145,9 @@ Wait until it completes.
 
 # Step 7 — Trust Developer on iPhone
 
-If the app will not open:
+If the app does not open:
 
-Go to your iPhone developer/device management settings and **Trust the developer profile** used to install the app.
+Go to your iPhone developer / device management settings and **Trust the developer profile** used to install the app.
 
 ---
 
@@ -153,9 +176,9 @@ To keep using the app, repeat these steps every 7 days:
 
 # Full Process Summary
 
-1. Upload Flutter project to GitHub
-2. Add GitHub Actions workflow
-3. Run workflow
+1. Upload Flutter or React Native project to GitHub
+2. Add the correct GitHub Actions workflow
+3. Run the workflow
 4. Download `.ipa` artifact
 5. Connect iPhone
 6. Open iTunes
@@ -167,6 +190,26 @@ To keep using the app, repeat these steps every 7 days:
 
 ---
 
+# Flutter and React Native Notes
+
+## Flutter
+
+Use the Flutter workflow if your project is a Flutter app.
+
+## React Native
+
+Use the React Native workflow if your project is a React Native app.
+
+For React Native, you may need to adjust:
+
+* app scheme name
+* workspace name
+* iOS project path
+
+because React Native iOS builds depend on your Xcode project structure.
+
+---
+
 # Disclaimer
 
-This guide is intended for testing and personal installations. Apple policies and sideloading behavior may change over time.
+This guide is intended for testing and personal installations. Apple policies, signing rules, and sideloading behavior may change over time.
